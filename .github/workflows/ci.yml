@@ -24,7 +24,7 @@ jobs:
           cat <<EOF > ~/.ssh/config
           Host ec2-target
               HostName ${{ secrets.EC2_HOST }}
-              User ${{ secrets.EC2_USERNAME }}
+              User ${{ secrets.EC2_USER }}
               IdentityFile ~/.ssh/id_rsa
               StrictHostKeyChecking no
           EOF
