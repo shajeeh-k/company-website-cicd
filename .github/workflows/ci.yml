@@ -13,14 +13,24 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up SSH Private Key
+      - name: Set up SSH Config and Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          
+          # Force the machine to always use your secret username and key for this host
+          cat <<EOF > ~/.ssh/config
+          Host ec2-target
+              HostName ${{ secrets.EC2_HOST }}
+              User ${{ secrets.EC2_USERNAME }}
+              IdentityFile ~/.ssh/id_rsa
+              StrictHostKeyChecking no
+          EOF
+          chmod 600 ~/.ssh/config
 
       - name: Transfer Files via SCP
         run: |
-          # Added -o StrictHostKeyChecking=no to bypass strict key validation issues
-          scp -v -o StrictHostKeyChecking=no -r . ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/var/www/html/
+          # Use the defined host profile instead of passing complex user/host strings
+          scp -v -r . ec2-target:/var/www/html/
