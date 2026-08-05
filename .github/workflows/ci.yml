@@ -18,10 +18,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Scans the host to avoid "Host key verification failed" errors
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Transfer Files via SCP
         run: |
-          # Copies everything in the repository root to the EC2 target folder
-          scp -r ./ * ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/my-app/
+          # Target changed to /var/www/html/
+          scp -r . ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/var/www/html/
