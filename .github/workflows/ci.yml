@@ -22,5 +22,5 @@ jobs:
 
       - name: Transfer Files via SCP
         run: |
-          # Target changed to /var/www/html/
-          scp -r . ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/var/www/html/
+          # Added -o StrictHostKeyChecking=no to bypass strict key validation issues
+          scp -v -o StrictHostKeyChecking=no -r . ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/var/www/html/
