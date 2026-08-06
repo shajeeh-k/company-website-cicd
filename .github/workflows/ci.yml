@@ -33,5 +33,5 @@ jobs:
       - name: Transfer Files via SCP
         run: |
           # Use the defined host profile instead of passing complex user/host strings
-          sudo chown ubuntu:ubuntu /var/www/html
+          sudo chown ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} /var/www/html
           scp -v -r . ec2-target:/var/www/html/ 
