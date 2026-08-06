@@ -20,7 +20,6 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
           
-          # Force the machine to always use your secret username and key for this host
           cat <<EOF > ~/.ssh/config
           Host ec2-target
               HostName ${{ secrets.EC2_HOST }}
@@ -32,8 +31,8 @@ jobs:
 
       - name: Transfer Files via SCP
         run: |
-          # 1. Connect via SSH and change permissions on the REMOTE EC2 instance
+          # 1. Fix permissions on the remote EC2 instance via SSH
           ssh ec2-target "sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} /var/www/html"
           
-          # 2. Use the defined host profile to transfer the files
+          # 2. Upload files via SCP
           scp -v -r . ec2-target:/var/www/html/
