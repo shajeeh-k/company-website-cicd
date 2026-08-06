@@ -29,10 +29,10 @@ jobs:
           EOF
           chmod 600 ~/.ssh/config
 
-      - name: Deploy to Web Server
+      - name: Fix Permissions and Transfer Files
         run: |
-          # 1. Upload to user home folder (Guaranteed write permissions)
-          scp -r . ec2-target:~/deploy_temp/
+          # 1. Update folder ownership on remote EC2 host
+          ssh ec2-target "sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} /var/www/html"
           
-          # 2. Sync to web root with elevated privileges and remove temp folder
-          ssh ec2-target "sudo rsync -av --delete ~/deploy_temp/ /var/www/html/ && rm -rf ~/deploy_temp"
+          # 2. Sync files over SCP
+          scp -v -r . ec2-target:/var/www/html/
